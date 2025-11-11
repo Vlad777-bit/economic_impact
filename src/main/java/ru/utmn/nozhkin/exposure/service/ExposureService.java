@@ -3,6 +3,7 @@ package ru.utmn.nozhkin.exposure.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,10 @@ import ru.utmn.nozhkin.exposure.domain.Exposure;
 import ru.utmn.nozhkin.exposure.repo.ExposureRepository;
 import ru.utmn.nozhkin.exposure.web.dto.ExposureDto;
 
+import java.math.BigDecimal;
+
+import static ru.utmn.nozhkin.exposure.repo.ExposureSpecifications.*;
+
 @Service
 @RequiredArgsConstructor
 public class ExposureService {
@@ -18,12 +23,15 @@ public class ExposureService {
     private final ExposureRepository repository;
 
     @Transactional(readOnly = true)
-    public Page<Exposure> list(String country, String income, Pageable pageable) {
-        if (country != null && !country.isBlank()) {
-            // простой пример: фильтр по country без пагинации — позже заменим на Page
-            // для демонстрации оставим общий list + пагинация через findAll(pageable)
-        }
-        return repository.findAll(pageable);
+    public Page<Exposure> list(String country, String income,
+                               BigDecimal econMin, BigDecimal econMax,
+                               Pageable pageable) {
+        Specification<Exposure> spec = Specification
+                .where(countryContains(country))
+                .and(incomeEquals(income))
+                .and(econIndexBetween(econMin, econMax));
+
+        return repository.findAll(spec, pageable);
     }
 
     @Transactional(readOnly = true)

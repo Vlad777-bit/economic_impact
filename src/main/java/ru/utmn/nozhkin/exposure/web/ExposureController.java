@@ -9,6 +9,8 @@ import ru.utmn.nozhkin.exposure.domain.Exposure;
 import ru.utmn.nozhkin.exposure.service.ExposureService;
 import ru.utmn.nozhkin.exposure.web.dto.ExposureDto;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/exposures")
 @RequiredArgsConstructor
@@ -20,9 +22,11 @@ public class ExposureController {
     public Page<Exposure> list(
             @RequestParam(required = false) String country,
             @RequestParam(required = false) String income,
+            @RequestParam(required = false) BigDecimal econMin,
+            @RequestParam(required = false) BigDecimal econMax,
             Pageable pageable
     ) {
-        return service.list(country, income, pageable);
+        return service.list(country, income, econMin, econMax, pageable);
     }
 
     @GetMapping("/{id}")

@@ -6,9 +6,17 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "exposures")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "exposures",
+        indexes = {
+                @Index(name = "idx_exposure_country", columnList = "country"),
+                @Index(name = "idx_exposure_income", columnList = "income_classification"),
+                @Index(name = "idx_exposure_econ", columnList = "economic_exposure_index")
+        })
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Exposure {
 
     @Id
